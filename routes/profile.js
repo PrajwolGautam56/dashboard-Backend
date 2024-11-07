@@ -7,19 +7,15 @@ const User = require('../models/User');
 // Create new profile
 router.post('/create', auth, async (req, res) => {
   try {
-    console.log('Received profile creation request:', req.body); // Debug log
+    console.log('Profile creation request received:', req.body);
     const { username, password } = req.body;
 
     if (!username || !password) {
       return res.status(400).json({ message: 'Please provide username and password' });
     }
 
-    // Get user details from auth middleware
-    const userId = req.user.id;
-    console.log('User ID from token:', userId); // Debug log
-
     // Get user details
-    const user = await User.findById(userId);
+    const user = await User.findById(req.user.id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -45,7 +41,7 @@ router.post('/create', auth, async (req, res) => {
     });
 
     await profile.save();
-    console.log('Profile created:', profile._id); // Debug log
+    console.log('Profile created successfully');
 
     res.status(201).json({
       message: 'Profile created successfully',
